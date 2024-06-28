@@ -1,5 +1,4 @@
-@import url("/css/badcomic/stylesheet.css");
-@import url("/css/E1234/stylesheet.css");
+@import url("badcomic/stylesheet.css");
 
 * {
 	box-model: border-box;
@@ -8,7 +7,7 @@
 }
 
 body {
-	background-image: url("/img/bread.jpg");
+	background-image: url("../img/bread.jpg");
 	background-color: #a9946a;
 	background-size: cover;
 	background-repeat: no-repeat;
