@@ -1,0 +1,9 @@
+@font-face {
+	font-family: 'BadComic';
+	src:
+		url('badcomic-regular-webfont.woff2') format('woff2'),
+		url('badcomic-regular-webfont.woff') format('woff');
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
+}

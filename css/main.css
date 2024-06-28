@@ -1,0 +1,117 @@
+@import url("/css/badcomic/stylesheet.css");
+@import url("/css/E1234/stylesheet.css");
+
+* {
+	box-model: border-box;
+	color: #feecd2;
+	font-family: "BadComic";
+}
+
+body {
+	background-image: url("/img/bread.jpg");
+	background-color: #a9946a;
+	background-size: cover;
+	background-repeat: no-repeat;
+	display: flex;
+	flex-direction: column;
+}
+
+html, body {
+	min-height: 100%;
+}
+
+@media(max-width: 1200px) {
+	body {
+		margin: 0;
+	}
+}
+
+a {
+	text-decoration: none;
+	color: #ffc16f;
+}
+
+.frame {
+	backdrop-filter: blur(2px);
+	border: solid 2px #3a2402;
+	border-left: none;
+	border-right: none;
+	min-width: calc(min(60rem, 100%));
+	margin: auto;
+	margin-top: 2rem;
+	background-color: #35150282;
+	flex: 1 1 auto;
+}
+
+@media(min-width: 1200px) {
+	.frame {
+		border: solid 2px #3a2402;
+		margin-top: 6rem;
+	}
+}
+
+.socials {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.socials>*>* {
+	height: 2.5rem;
+}
+
+.socials>* {
+	margin-right: 0.5rem;
+}
+
+@media(min-width: 1200px) {
+	.socials {
+		display: inline-flex;
+	}
+	.socials>*>* {
+		height: 1.5rem;
+	}
+}
+
+section {
+	padding: 2rem;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+
+.seperator {
+	border: solid 1px #3a2302;
+}
+
+.small {
+	color: #c8b6a0;
+	margin-top: 0;
+}
+
+h1 {
+	margin-right: 1rem;
+	font-size: 2rem;
+	color: #ffd8a4;
+	display: inline;
+	margin-bottom: 0;
+}
+
+h2 {
+	margin: 0;
+}
+
+p {
+	margin-bottom: 0.5rem;
+	max-width: 70ch;
+}
+
+table, th, td {
+	border: 1px solid;
+}
+
+td, th {
+	padding: 0.5rem;
+}
+
+table {
+	margin-bottom: 0.5rem;
+}
