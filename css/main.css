@@ -7,22 +7,35 @@
 }
 
 body {
-	background-image: url("../img/bread.jpg");
-	background-color: #a9946a;
-	background-size: cover;
-	background-repeat: no-repeat;
+	/*background-color: #a9946a;*/
+	background-color: #1b1202;
 	display: flex;
 	flex-direction: column;
+	margin: 0;
 }
 
-html, body {
+.bg {
+	object-fit: contain;
+	image-rendering: pixelated;
+	position: absolute;
+	width: 100%;
+	clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+}
+
+.bg::after {
+	content: "hey there";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	backdrop-filter: blur(8px);
+	background-color: red;
+}
+
+html,
+body {
 	min-height: 100%;
-}
-
-@media(max-width: 1200px) {
-	body {
-		margin: 0;
-	}
 }
 
 a {
@@ -31,22 +44,18 @@ a {
 }
 
 .frame {
-	backdrop-filter: blur(2px);
+	backdrop-filter: blur(8px);
 	border: solid 2px #3a2402;
-	border-left: none;
-	border-right: none;
-	min-width: calc(min(60rem, 100%));
+	/* my browser (zen) has a horizontal scrollbar with 100svw for some reason */
+	max-width: min(70ch, 99svw);
+	width: 70ch;
+	min-width: 0;
 	margin: auto;
-	margin-top: 2rem;
-	background-color: #35150282;
+	margin-bottom: 32px;
+	margin-top: 64px;
+	background-color: #35150291;
 	flex: 1 1 auto;
-}
-
-@media(min-width: 1200px) {
-	.frame {
-		border: solid 2px #3a2402;
-		margin-top: 6rem;
-	}
+	border-radius: 8px;
 }
 
 .socials {
@@ -54,19 +63,19 @@ a {
 	flex-wrap: wrap;
 }
 
-.socials>*>* {
+.socials > * > * {
 	height: 2.5rem;
 }
 
-.socials>* {
+.socials > * {
 	margin-right: 0.5rem;
 }
 
-@media(min-width: 1200px) {
+@media (min-width: 1200px) {
 	.socials {
 		display: inline-flex;
 	}
-	.socials>*>* {
+	.socials > * > * {
 		height: 1.5rem;
 	}
 }
@@ -78,7 +87,7 @@ section {
 }
 
 .seperator {
-	border: solid 1px #3a2302;
+	border: solid 1px #3a2402;
 }
 
 .small {
@@ -103,11 +112,14 @@ p {
 	max-width: 70ch;
 }
 
-table, th, td {
+table,
+th,
+td {
 	border: 1px solid;
 }
 
-td, th {
+td,
+th {
 	padding: 0.5rem;
 }
 
