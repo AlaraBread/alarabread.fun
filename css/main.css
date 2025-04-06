@@ -1,36 +1,29 @@
 @import url("badcomic/stylesheet.css");
 
 * {
-	box-model: border-box;
+	box-sizing: border-box;
 	color: #feecd2;
 	font-family: "BadComic";
 }
 
 body {
-	/*background-color: #a9946a;*/
-	background-color: #1b1202;
+	background-color: #241601;
+	background-size: 32px 32px;
+	background-position: -1px -1px;
+	background-image: linear-gradient(90deg, #271c0b 2px, transparent 1px),
+		linear-gradient(180deg, #271c0b 2px, transparent 1px);
 	display: flex;
 	flex-direction: column;
 	margin: 0;
 }
 
 .bg {
+	pointer-events: none;
 	object-fit: contain;
 	image-rendering: pixelated;
 	position: absolute;
 	width: 100%;
 	clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
-}
-
-.bg::after {
-	content: "hey there";
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	backdrop-filter: blur(8px);
-	background-color: red;
 }
 
 html,
@@ -46,13 +39,13 @@ a {
 .frame {
 	backdrop-filter: blur(8px);
 	border: solid 2px #3a2402;
-	/* my browser (zen) has a horizontal scrollbar with 100svw for some reason */
-	max-width: min(70ch, 99svw);
+	max-width: min(70ch, 100svw);
 	width: 70ch;
 	min-width: 0;
 	margin: auto;
 	margin-bottom: 32px;
 	margin-top: 64px;
+	padding: 16px 0;
 	background-color: #35150291;
 	flex: 1 1 auto;
 	border-radius: 8px;
@@ -81,13 +74,13 @@ a {
 }
 
 section {
-	padding: 2rem;
-	padding-top: 1rem;
-	padding-bottom: 1rem;
+	padding: 0 32px;
 }
 
-.seperator {
+hr {
 	border: solid 1px #3a2402;
+	margin: 16px 0;
+	padding: 0;
 }
 
 .small {
@@ -103,8 +96,14 @@ h1 {
 	margin-bottom: 0;
 }
 
-h2 {
+h2,
+h3 {
 	margin: 0;
+}
+
+ul,
+ol {
+	margin: 8px 0;
 }
 
 p {
