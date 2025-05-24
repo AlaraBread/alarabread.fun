@@ -123,3 +123,16 @@ th {
 table {
 	margin: 8px 0;
 }
+
+label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	max-width: max-content;
+}
+
+pre {
+	background-color: #351502;
+	padding: 8px;
+	margin: 8px 0;
+}
