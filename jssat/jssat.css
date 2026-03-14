@@ -1,0 +1,62 @@
+.expression-input-label {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	margin: auto;
+	align-items: center;
+}
+
+.expression-input-container {
+	min-height: 32px;
+	min-width: 32px;
+	position: relative;
+	min-width: 32ch;
+}
+
+.expression-input {
+	color: transparent;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	caret-color: black;
+	border: none;
+	border-radius: 8px;
+}
+
+.expression-input:focus-visible {
+	outline: none;
+	border: 1px solid #3a2402;
+}
+
+.expression-input[data-invalid-js] {
+	border: 1px solid red;
+}
+
+.expression-input,
+.expression-input-highlight code {
+	font-family: "ComicShanns", monospace;
+	font-size: 1rem;
+	padding: 8px;
+	margin: 0;
+}
+
+.expression-input-highlight {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	margin: 0;
+	padding: 0;
+	background: none;
+	border: 1px solid transparent;
+}
+
+.expression-input-highlight code {
+	background-color: transparent;
+	height: 100%;
+}

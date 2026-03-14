@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+	<head>
+		<title>jssat</title>
+		<script type="importmap">
+			{
+				"imports": {
+					"acorn": "./acorn.min.js"
+				}
+			}
+		</script>
+		<script src="./highlight.min.js"></script>
+		<script type="module" src="./acorn.min.js"></script>
+		<link rel="stylesheet" href="../css/main.css" />
+		<link rel="stylesheet" href="./light.css" />
+		<link rel="stylesheet" href="./dark.css" />
+		<link rel="stylesheet" href="./jssat.css" />
+		<script>
+			hljs.highlightAll();
+		</script>
+	</head>
+	<body>
+		<img class="bg" src="/img/bread.jpg" alt="" />
+		<div class="frame">
+			<section>
+				<h1>jssat: a daily game</h1>
+				<div class="socials">
+					<a
+						title="Twitter"
+						href="https://twitter.com/AlaraBread"
+						target="_blank"
+						><img alt="twitter" src="../img/twitter.png"
+					/></a>
+					<a title="itch.io" href="https://alarabread.itch.io/" target="_blank"
+						><img alt="itch.io" src="../img/itch.png"
+					/></a>
+					<a title="Github" href="https://github.com/AlaraBread" target="_blank"
+						><img alt="github" src="../img/github.png"
+					/></a>
+					<a title="Gitlab" href="https://gitlab.com/AlaraBread" target="_blank"
+						><img alt="gitlab" src="../img/gitlab.png"
+					/></a>
+				</div>
+			</section>
+			<hr />
+			<section>
+				<a href="..">back to home page.</a>
+			</section>
+		</div>
+		<div class="frame" id="expression-container"></div>
+		<script type="module">
+			import * as acorn from "acorn";
+			function isValidJS(js) {
+				try {
+					const expression = acorn.parseExpressionAt(js, 0, {
+						ecmaVersion: "latest",
+						preserveParens: true,
+					});
+					if (expression.end !== js.trim().length) {
+						// acorn will stop at the end of the fist expression
+						// if theres more text after that, we want to show an error
+						return false;
+					}
+					return true;
+				} catch (error) {
+					return false;
+				}
+			}
+
+			function generateExpressionInput(parentElement, labelText) {
+				const label = document.createElement("label");
+				label.className = "expression-input-label";
+				label.textContent = labelText;
+
+				const container = document.createElement("div");
+				container.className = "expression-input-container";
+
+				const input = document.createElement("input");
+				input.type = "text";
+				input.className = "expression-input hljs";
+
+				const pre = document.createElement("pre");
+				pre.className = "expression-input-highlight";
+
+				const code = document.createElement("code");
+				code.className = "language-js expression-input-highlight-inner";
+
+				pre.appendChild(code);
+				container.appendChild(input);
+				container.appendChild(pre);
+				label.appendChild(container);
+
+				parentElement.appendChild(label);
+			}
+			const expressionContainer = document.getElementById(
+				"expression-container",
+			);
+			for (let i = 0; i < 10; i++) {
+				generateExpressionInput(expressionContainer, `Expression ${i + 1}`);
+			}
+
+			const expressionInputs =
+				document.getElementsByClassName("expression-input");
+			function updateHighlight(event) {
+				const expressionInput = event.target;
+				const expression = expressionInput.value;
+				console.log(expressionInput.parentElement);
+				const inputHighlight =
+					expressionInput.parentElement.getElementsByClassName(
+						"expression-input-highlight-inner",
+					)[0];
+				inputHighlight.innerHTML = expression;
+				inputHighlight.removeAttribute("data-highlighted");
+				if (isValidJS(expression)) {
+					inputHighlight.removeAttribute("data-invalid-js");
+					expressionInput.removeAttribute("data-invalid-js");
+					hljs.highlightElement(inputHighlight);
+				} else {
+					inputHighlight.setAttribute("data-invalid-js", "true");
+					expressionInput.setAttribute("data-invalid-js", "true");
+				}
+			}
+			Array.prototype.forEach.call(expressionInputs, (expressionInput) => {
+				expressionInput.addEventListener("input", updateHighlight);
+				updateHighlight({ target: expressionInput });
+			});
+		</script>
+	</body>
+</html>
