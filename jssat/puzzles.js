@@ -5,8 +5,12 @@ export const puzzles = [
 		expression: `!Number.isNaN(a)
 	&& isNaN(a)
 	&& typeof a != "string"
-	&& typeof a != "undefined"
-	&& !a.toString().includes("[")`,
+	&& !a.toString().includes("[")
+	&& !a.toString().includes(",")
+	&& a.toString.toString() ==
+		\`function toString() {\\n\\
+    [native code]\\n}\\
+\``,
 		inputs: ["a"],
 	},
 ];
