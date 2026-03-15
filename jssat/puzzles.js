@@ -9,10 +9,4 @@ export const puzzles = [
 	&& !a.toString().includes("[")`,
 		inputs: ["a"],
 	},
-	{
-		title: "test puzzle",
-		key: "test-puzzle",
-		expression: `a === b.toString()`,
-		inputs: ["a", "b"],
-	},
 ];
