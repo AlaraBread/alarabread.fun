@@ -222,90 +222,97 @@
 				parentElement.appendChild(label);
 			}
 			function generateExpressionDisplay(parentElement, expression) {
-				console.log(expression);
 				const display = document.createElement("div");
 				display.className = "expression-display hljs language-js";
 				display.textContent = expression;
 				hljs.highlightElement(display);
 				parentElement.replaceChildren(display);
 			}
+
 			const inputsContainer = document.getElementById("inputs-container");
 			const expressionContainer = document.getElementById(
 				"expression-container",
 			);
-			const puzzle = puzzles[0];
-			inputsContainer.innerHTML = "";
-			for (let i = 0; i < puzzle.inputs.length; i++) {
-				generateExpressionInput(inputsContainer, puzzle.inputs[i]);
-			}
-			const submitButton = document.createElement("button");
-			submitButton.textContent = "submit";
-			submitButton.addEventListener("click", () => {
-				const expressionInputs =
-					document.getElementsByClassName("expression-input");
-				const inputs = Array.from(expressionInputs).map(
-					(expressionInput) => expressionInput.innerText,
-				);
-				const isValid = inputs.every(isValidJS);
-				if (!isValid) return;
-				console.log(inputs);
-				const inputsEvaled = Object.fromEntries(
-					puzzle.inputs.map((inputName, index) => [
-						inputName,
-						eval(`(${inputs[index]})`),
-					]),
-				);
-				const result = evalWithBindings(puzzle.expression, inputsEvaled);
-				if (!!result) {
-					generateExpressionDisplay(expressionContainer, "you did it!");
-				} else {
-					generateExpressionDisplay(expressionContainer, "try again!");
-					window.setTimeout(() => {
-						generateExpressionDisplay(expressionContainer, puzzle.expression);
-					}, 1000);
+			function loadPuzzle(puzzle) {
+				inputsContainer.innerHTML = "";
+				for (let i = 0; i < puzzle.inputs.length; i++) {
+					generateExpressionInput(inputsContainer, puzzle.inputs[i]);
 				}
-			});
-			inputsContainer.appendChild(submitButton);
-			generateExpressionDisplay(expressionContainer, puzzle.expression);
-
-			const puzzleTitle = document.createElement("h2");
-			puzzleTitle.textContent = puzzle.title;
-			const expressionFrame = document.getElementById("expression-frame");
-			expressionFrame.prepend(puzzleTitle);
-
-			function sanitizeExpressionText(text) {
-				return text.replaceAll(/\n/g, "");
-			}
-
-			const expressionInputs =
-				document.getElementsByClassName("expression-input");
-			function updateHighlight(event) {
-				const expressionInput = event.target;
-				const containsNewline = expressionInput.innerText.includes("\n");
-				const expression = sanitizeExpressionText(expressionInput.innerText);
-				const selOffsets = getSelectionCharacterOffsetWithin(expressionInput);
-				expressionInput.innerText = expression;
-				expressionInput.removeAttribute("data-highlighted");
-				if (isValidJS(expression)) {
-					expressionInput.removeAttribute("data-invalid-js");
-					hljs.highlightElement(expressionInput);
-				} else {
-					expressionInput.setAttribute("data-invalid-js", "true");
-				}
-				setCursorPosition(
-					expressionInput,
-					containsNewline ? selOffsets.start - 1 : selOffsets.start,
-				);
-			}
-			Array.prototype.forEach.call(expressionInputs, (expressionInput) => {
-				expressionInput.addEventListener("input", updateHighlight);
-				expressionInput.addEventListener("keydown", (event) => {
-					if (event.key === "Enter") {
-						submitButton.click();
+				const submitButton = document.createElement("button");
+				submitButton.textContent = "submit";
+				submitButton.addEventListener("click", () => {
+					const expressionInputs =
+						document.getElementsByClassName("expression-input");
+					const inputs = Array.from(expressionInputs).map(
+						(expressionInput) => expressionInput.innerText,
+					);
+					const isValid = inputs.every(isValidJS);
+					if (!isValid) return;
+					const inputsEvaled = Object.fromEntries(
+						puzzle.inputs.map((inputName, index) => [
+							inputName,
+							eval(`(${inputs[index]})`),
+						]),
+					);
+					const result = evalWithBindings(puzzle.expression, inputsEvaled);
+					if (!!result) {
+						generateExpressionDisplay(expressionContainer, "you did it!");
+					} else {
+						generateExpressionDisplay(expressionContainer, "try again!");
+						window.setTimeout(() => {
+							generateExpressionDisplay(expressionContainer, puzzle.expression);
+						}, 1000);
 					}
 				});
-				updateHighlight({ target: expressionInput });
+				inputsContainer.appendChild(submitButton);
+				generateExpressionDisplay(expressionContainer, puzzle.expression);
+				function sanitizeExpressionText(text) {
+					return text.replaceAll(/\n/g, "");
+				}
+				const expressionInputs =
+					document.getElementsByClassName("expression-input");
+				function updateHighlight(event) {
+					const expressionInput = event.target;
+					const containsNewline = expressionInput.innerText.includes("\n");
+					const expression = sanitizeExpressionText(expressionInput.innerText);
+					const selOffsets = getSelectionCharacterOffsetWithin(expressionInput);
+					expressionInput.innerText = expression;
+					expressionInput.removeAttribute("data-highlighted");
+					if (isValidJS(expression)) {
+						expressionInput.removeAttribute("data-invalid-js");
+						hljs.highlightElement(expressionInput);
+					} else {
+						expressionInput.setAttribute("data-invalid-js", "true");
+					}
+					setCursorPosition(
+						expressionInput,
+						containsNewline ? selOffsets.start - 1 : selOffsets.start,
+					);
+				}
+				Array.prototype.forEach.call(expressionInputs, (expressionInput) => {
+					expressionInput.addEventListener("input", updateHighlight);
+					expressionInput.addEventListener("keydown", (event) => {
+						if (event.key === "Enter") {
+							submitButton.click();
+						}
+					});
+					updateHighlight({ target: expressionInput });
+				});
+			}
+			loadPuzzle(puzzles[0]);
+			const puzzleSelector = document.createElement("select");
+			puzzleSelector.addEventListener("change", (event) => {
+				loadPuzzle(puzzles[event.target.value]);
 			});
+			const options = puzzles.map((puzzle, index) => {
+				const option = document.createElement("option");
+				option.textContent = `${index + 1}. ${puzzle.title}`;
+				option.value = index;
+				return option;
+			});
+			puzzleSelector.append(...options);
+			const expressionFrame = document.getElementById("expression-frame");
+			expressionFrame.prepend(puzzleSelector);
 		</script>
 	</body>
 </html>
