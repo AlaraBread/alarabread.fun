@@ -155,7 +155,7 @@ button {
 	font-family: "ComicShanns", monospace;
 	overflow-x: scroll;
 	tab-size: 4;
-	border: 1px solid #3a2402;
+	border: 2px solid #3a2402;
 	border-radius: 8px;
 	transition:
 		background-color 0.05s ease-out,

@@ -28,7 +28,7 @@ h2 {
 	font-size: 1rem;
 	padding: 8px;
 	margin: 8px 0 0 0;
-	border: 1px solid transparent;
+	border: 2px solid transparent;
 	border-radius: 8px;
 	overflow: scroll;
 	resize: horizontal;
@@ -41,11 +41,11 @@ h2 {
 
 .expression-input:focus-visible {
 	outline: none;
-	border: 1px solid #3a2402;
+	border: 2px solid #3a2402;
 }
 
 .expression-input[data-invalid-js] {
-	border: 1px solid red;
+	border: 2px solid red;
 }
 
 button {
