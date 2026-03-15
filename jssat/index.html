@@ -57,6 +57,7 @@
 			<div id="expression-container"></div>
 		</div>
 		<div class="frame" id="inputs-container"></div>
+		<div class="frame" id="solution-container"></div>
 		<script>
 			// seperate script tag to disable strict mode for the with here
 			function evalWithBindings(expression, bindings) {
@@ -215,7 +216,7 @@
 			function generateExpressionInput(parentElement, labelText) {
 				const label = document.createElement("label");
 				label.className = "expression-input-label";
-				label.textContent = labelText;
+				label.textContent = `${labelText} =`;
 
 				const input = document.createElement("div");
 				input.contentEditable = "plaintext-only";
@@ -243,8 +244,37 @@
 			const expressionContainer = document.getElementById(
 				"expression-container",
 			);
+			const solutionContainer = document.getElementById("solution-container");
 			function loadPuzzle(puzzle) {
 				inputsContainer.innerHTML = "";
+				function renderSavedSolution() {
+					solutionContainer.innerHTML = "";
+					const savedSolution = localStorage.getItem(`solution-${puzzle.key}`);
+					if (savedSolution) {
+						let displayContent = savedSolution;
+						const parsed = JSON.parse(savedSolution);
+						displayContent = puzzle.inputs
+							.map((inputName, index) => {
+								return `${inputName} = ${parsed[index]}`;
+							})
+							.join("\n");
+
+						solutionContainer.style.display = "";
+						const details = document.createElement("details");
+						const summary = document.createElement("summary");
+						summary.textContent = "view previous solution";
+						const display = document.createElement("div");
+						display.className = "hljs language-js";
+						display.textContent = displayContent;
+						hljs.highlightElement(display);
+						details.appendChild(summary);
+						details.appendChild(display);
+						solutionContainer.appendChild(details);
+					} else {
+						solutionContainer.style.display = "none";
+					}
+				}
+				renderSavedSolution();
 				for (let i = 0; i < puzzle.inputs.length; i++) {
 					generateExpressionInput(inputsContainer, puzzle.inputs[i]);
 				}
@@ -292,6 +322,11 @@
 					}
 					if (!!result) {
 						generateExpressionDisplay(expressionContainer, "you did it!");
+						localStorage.setItem(
+							`solution-${puzzle.key}`,
+							JSON.stringify(inputs),
+						);
+						renderSavedSolution();
 						window.setTimeout(() => {
 							generateExpressionDisplay(expressionContainer, puzzle.expression);
 						}, 1000);

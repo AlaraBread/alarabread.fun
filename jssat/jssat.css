@@ -1,15 +1,37 @@
 .expression-input-label {
 	display: block;
-	margin: 0px 8px 16px;
+	margin: 0px 16px 16px;
 }
 
 h2 {
 	margin: 8px;
 }
 
-.frame:has(> #expression-container) {
+.frame:has(> #expression-container),
+.frame#solution-container {
 	padding: 0;
 	overflow: hidden;
+}
+
+#solution-container > details {
+	margin: 16px 0;
+}
+
+#solution-container > details[open] {
+	margin-bottom: 0px;
+}
+
+#solution-container > details[open] > summary {
+	margin-bottom: 16px;
+}
+
+summary {
+	margin-left: 16px;
+}
+
+#solution-container .hljs {
+	font-size: 1.5rem;
+	padding: 8px;
 }
 
 #expression-container {
