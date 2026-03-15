@@ -25,7 +25,7 @@
 		<img class="bg" src="/img/bread.jpg" alt="" />
 		<div class="frame">
 			<section>
-				<h1>jssat: a daily game</h1>
+				<h1>jssat</h1>
 				<div class="socials">
 					<a
 						title="Twitter"
@@ -49,7 +49,9 @@
 				<a href="..">back to home page.</a>
 			</section>
 		</div>
-		<div class="frame" id="expression-container"></div>
+		<div class="frame" id="expression-frame">
+			<div id="expression-container"></div>
+		</div>
 		<div class="frame" id="inputs-container"></div>
 		<script>
 			// seperate script tag to disable strict mode for the with here
@@ -216,6 +218,7 @@
 				parentElement.appendChild(label);
 			}
 			function generateExpressionDisplay(parentElement, expression) {
+				console.log(expression);
 				const display = document.createElement("div");
 				display.className = "expression-display hljs language-js";
 				display.textContent = expression;
@@ -245,7 +248,7 @@
 				const inputsEvaled = Object.fromEntries(
 					puzzle.inputs.map((inputName, index) => [
 						inputName,
-						eval(inputs[index]),
+						eval(`(${inputs[index]})`),
 					]),
 				);
 				const result = evalWithBindings(puzzle.expression, inputsEvaled);
@@ -260,6 +263,11 @@
 			});
 			inputsContainer.appendChild(submitButton);
 			generateExpressionDisplay(expressionContainer, puzzle.expression);
+
+			const puzzleTitle = document.createElement("h2");
+			puzzleTitle.textContent = puzzle.title;
+			const expressionFrame = document.getElementById("expression-frame");
+			expressionFrame.prepend(puzzleTitle);
 
 			function sanitizeExpressionText(text) {
 				return text.replaceAll(/\n/g, "");

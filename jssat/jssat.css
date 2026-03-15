@@ -3,15 +3,24 @@
 	margin: 0px 8px 16px;
 }
 
-#expression-container {
+h2 {
+	margin: 8px;
+}
+
+.frame:has(> #expression-container) {
 	padding: 0;
 	overflow: hidden;
 }
 
+#expression-container {
+	border-top: 2px solid #3a2402;
+}
+
 .expression-display {
 	font-family: "ComicShanns", monospace;
-	font-size: 2rem;
+	font-size: 1.5rem;
 	padding: 8px;
+	white-space: pre;
 }
 
 .expression-input {
@@ -37,4 +46,8 @@
 
 .expression-input[data-invalid-js] {
 	border: 1px solid red;
+}
+
+button {
+	margin: 0 16px;
 }
