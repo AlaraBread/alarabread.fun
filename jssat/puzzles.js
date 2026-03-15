@@ -12,7 +12,7 @@ export const puzzles = [
 	&& isNaN(a)
 	&& typeof a != "string"
 	&& !a.toString().includes("[")
-	&& !"length" in a`,
+	&& !("length" in a)`,
 		inputs: ["a"],
 	},
 ];
