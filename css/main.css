@@ -176,3 +176,22 @@ button:focus-visible {
 button:active {
 	transform: scale(1);
 }
+
+select {
+	font-size: 1rem;
+	background-color: #351502;
+	padding: 8px;
+	margin: 8px 0;
+	font-family: "ComicShanns", monospace;
+	overflow-x: scroll;
+	tab-size: 4;
+	border: 2px solid #3a2402;
+	border-radius: 8px;
+	transition: background-color 0.05s ease-out;
+}
+
+select:hover,
+select:focus-visible,
+select:active {
+	background-color: #452502;
+}

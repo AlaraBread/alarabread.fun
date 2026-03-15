@@ -53,16 +53,5 @@ button {
 }
 
 select {
-	font-size: 1rem;
-	background-color: #351502;
-	padding: 8px;
-	margin: 8px 0;
-	font-family: "ComicShanns", monospace;
-	overflow-x: scroll;
-	tab-size: 4;
-	border: 2px solid #3a2402;
-	border-radius: 8px;
-	transition:
-		background-color 0.05s ease-out,
-		transform 0.05s ease-out;
+	margin: 16px;
 }
