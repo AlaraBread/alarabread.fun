@@ -6,11 +6,7 @@ export const puzzles = [
 	&& isNaN(a)
 	&& typeof a != "string"
 	&& !a.toString().includes("[")
-	&& !a.toString().includes(",")
-	&& a.toString.toString() ==
-		\`function toString() {\\n\\
-    [native code]\\n}\\
-\``,
+	&& !"length" in a`,
 		inputs: ["a"],
 	},
 ];
