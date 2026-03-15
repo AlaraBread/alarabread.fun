@@ -60,12 +60,22 @@
 		<script>
 			// seperate script tag to disable strict mode for the with here
 			function evalWithBindings(expression, bindings) {
-				return eval(`
-					with(bindings)
-					{
-						${expression}
-					}
-				`);
+				try {
+					return {
+						result: eval(`
+							with(bindings)
+							{
+								${expression}
+							}
+						`),
+						error: false,
+					};
+				} catch (error) {
+					console.error(error);
+					return {
+						error: true,
+					};
+				}
 			}
 		</script>
 		<script type="module">
@@ -248,15 +258,43 @@
 					);
 					const isValid = inputs.every(isValidJS);
 					if (!isValid) return;
-					const inputsEvaled = Object.fromEntries(
-						puzzle.inputs.map((inputName, index) => [
-							inputName,
-							eval(`(${inputs[index]})`),
-						]),
+					let inputsEvaled;
+					try {
+						inputsEvaled = Object.fromEntries(
+							puzzle.inputs.map((inputName, index) => [
+								inputName,
+								eval(`(${inputs[index]})`),
+							]),
+						);
+					} catch (error) {
+						generateExpressionDisplay(
+							expressionContainer,
+							"uncaught exception",
+						);
+						window.setTimeout(() => {
+							generateExpressionDisplay(expressionContainer, puzzle.expression);
+						}, 1000);
+						return;
+					}
+					const { result, error } = evalWithBindings(
+						puzzle.expression,
+						inputsEvaled,
 					);
-					const result = evalWithBindings(puzzle.expression, inputsEvaled);
+					if (error) {
+						generateExpressionDisplay(
+							expressionContainer,
+							"uncaught exception",
+						);
+						window.setTimeout(() => {
+							generateExpressionDisplay(expressionContainer, puzzle.expression);
+						}, 1000);
+						return;
+					}
 					if (!!result) {
 						generateExpressionDisplay(expressionContainer, "you did it!");
+						window.setTimeout(() => {
+							generateExpressionDisplay(expressionContainer, puzzle.expression);
+						}, 1000);
 					} else {
 						generateExpressionDisplay(expressionContainer, "try again!");
 						window.setTimeout(() => {
