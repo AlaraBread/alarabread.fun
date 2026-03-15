@@ -1,29 +1,33 @@
 .expression-input-label {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 8px;
-	margin: auto;
-	align-items: center;
+	display: block;
+	margin: 0px 8px 16px;
 }
 
-.expression-input-container {
-	min-height: 32px;
-	min-width: 32px;
-	position: relative;
-	min-width: 32ch;
+#expression-container {
+	padding: 0;
+	overflow: hidden;
+}
+
+.expression-display {
+	font-family: "ComicShanns", monospace;
+	font-size: 2rem;
+	padding: 8px;
 }
 
 .expression-input {
-	color: transparent;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	caret-color: black;
-	border: none;
+	font-family: "ComicShanns", monospace;
+	font-size: 1rem;
+	padding: 8px;
+	margin: 8px 0 0 0;
+	border: 1px solid transparent;
 	border-radius: 8px;
+	overflow: scroll;
+	resize: horizontal;
+	min-height: calc(1rem + 16px * 2);
+	max-height: calc(16rem + 16px * 2);
+	min-width: 20ch;
+	max-width: 60ch;
+	white-space: pre-wrap;
 }
 
 .expression-input:focus-visible {
@@ -33,30 +37,4 @@
 
 .expression-input[data-invalid-js] {
 	border: 1px solid red;
-}
-
-.expression-input,
-.expression-input-highlight code {
-	font-family: "ComicShanns", monospace;
-	font-size: 1rem;
-	padding: 8px;
-	margin: 0;
-}
-
-.expression-input-highlight {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	pointer-events: none;
-	margin: 0;
-	padding: 0;
-	background: none;
-	border: 1px solid transparent;
-}
-
-.expression-input-highlight code {
-	background-color: transparent;
-	height: 100%;
 }

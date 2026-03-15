@@ -46,13 +46,15 @@ a {
 	max-width: calc(min(70ch, 100svw));
 	width: 70ch;
 	min-width: 0;
-	margin: auto;
-	margin-bottom: 32px;
-	margin-top: 64px;
+	margin: 16px auto;
 	padding: 16px 0;
 	background-color: #35150291;
 	flex: 1 1 auto;
 	border-radius: 8px;
+}
+
+.frame:first-of-type {
+	margin-top: 64px;
 }
 
 .socials {
@@ -143,4 +145,34 @@ pre {
 	font-family: "ComicShanns", monospace;
 	overflow-x: scroll;
 	tab-size: 4;
+}
+
+button {
+	font-size: 1rem;
+	background-color: #351502;
+	padding: 8px;
+	margin: 8px 0;
+	font-family: "ComicShanns", monospace;
+	overflow-x: scroll;
+	tab-size: 4;
+	border: 1px solid #3a2402;
+	border-radius: 8px;
+	transition:
+		background-color 0.05s ease-out,
+		transform 0.05s ease-out;
+}
+
+button:hover,
+button:focus-visible,
+button:active {
+	background-color: #452502;
+}
+
+button:hover,
+button:focus-visible {
+	transform: scale(1.1);
+}
+
+button:active {
+	transform: scale(1);
 }

@@ -5,12 +5,14 @@
 		<script type="importmap">
 			{
 				"imports": {
-					"acorn": "./acorn.min.js"
+					"acorn": "./acorn.min.js",
+					"puzzles": "./puzzles.js"
 				}
 			}
 		</script>
 		<script src="./highlight.min.js"></script>
 		<script type="module" src="./acorn.min.js"></script>
+		<script type="module" src="./puzzles.js"></script>
 		<link rel="stylesheet" href="../css/main.css" />
 		<link rel="stylesheet" href="./light.css" />
 		<link rel="stylesheet" href="./dark.css" />
@@ -48,8 +50,22 @@
 			</section>
 		</div>
 		<div class="frame" id="expression-container"></div>
+		<div class="frame" id="inputs-container"></div>
+		<script>
+			// seperate script tag to disable strict mode for the with here
+			function evalWithBindings(expression, bindings) {
+				return eval(`
+					with(bindings)
+					{
+						${expression}
+					}
+				`);
+			}
+		</script>
 		<script type="module">
 			import * as acorn from "acorn";
+			import { puzzles } from "puzzles";
+
 			function isValidJS(js) {
 				try {
 					const expression = acorn.parseExpressionAt(js, 0, {
@@ -67,61 +83,215 @@
 				}
 			}
 
+			// from https://stackoverflow.com/a/4812022
+			function getSelectionCharacterOffsetWithin(element) {
+				let start = 0;
+				let end = 0;
+				const doc = element.ownerDocument || element.document;
+				const win = doc.defaultView || doc.parentWindow;
+				let sel;
+				if (typeof win.getSelection != "undefined") {
+					sel = win.getSelection();
+					if (sel.rangeCount > 0) {
+						const range = win.getSelection().getRangeAt(0);
+						const preCaretRange = range.cloneRange();
+						preCaretRange.selectNodeContents(element);
+						preCaretRange.setEnd(range.startContainer, range.startOffset);
+						start = preCaretRange.toString().length;
+						preCaretRange.setEnd(range.endContainer, range.endOffset);
+						end = preCaretRange.toString().length;
+					}
+				} else if ((sel = doc.selection) && sel.type != "Control") {
+					const textRange = sel.createRange();
+					const preCaretTextRange = doc.body.createTextRange();
+					preCaretTextRange.moveToElementText(element);
+					preCaretTextRange.setEndPoint("EndToStart", textRange);
+					start = preCaretTextRange.text.length;
+					preCaretTextRange.setEndPoint("EndToEnd", textRange);
+					end = preCaretTextRange.text.length;
+				}
+				return { start: start, end: end };
+			}
+
+			// from https://markaicode.com/how-to-set-cursor-position-in-contenteditable-elements-with-javascript/
+			// Helper function to traverse DOM and find text node at specific position
+			function findTextNodeAndOffset(element, targetPosition) {
+				let currentPosition = 0;
+
+				function traverse(node) {
+					// If it's a text node, check if target position falls within it
+					if (node.nodeType === Node.TEXT_NODE) {
+						const textLength = node.textContent.length;
+
+						if (currentPosition + textLength >= targetPosition) {
+							// Found the target text node
+							const offset = targetPosition - currentPosition;
+							return { node: node, offset: offset };
+						}
+
+						currentPosition += textLength;
+					} else {
+						// Recursively check child nodes
+						for (let child of node.childNodes) {
+							const result = traverse(child);
+							if (result.node) {
+								return result;
+							}
+						}
+					}
+
+					return { node: null, offset: 0 };
+				}
+
+				return traverse(element);
+			}
+
+			// from https://markaicode.com/how-to-set-cursor-position-in-contenteditable-elements-with-javascript/
+			// Main function to set cursor position in contenteditable elements
+			function setCursorPosition(element, position, fromEnd = false) {
+				// Ensure element is focusable
+				if (!element.isContentEditable) {
+					console.warn("Element must be contenteditable");
+					return false;
+				}
+
+				// Get text content for position calculation
+				const textContent = element.textContent || element.innerText || "";
+				const maxPosition = textContent.length;
+
+				// Calculate actual position
+				let targetPosition;
+				if (fromEnd) {
+					targetPosition = Math.max(0, maxPosition - position);
+				} else {
+					targetPosition = Math.min(position, maxPosition);
+				}
+
+				try {
+					// Create range and selection
+					const range = document.createRange();
+					const selection = window.getSelection();
+
+					// Find the text node and position
+					const result = findTextNodeAndOffset(element, targetPosition);
+
+					if (result.node) {
+						range.setStart(result.node, result.offset);
+						range.setEnd(result.node, result.offset);
+
+						// Clear existing selection and apply new range
+						selection.removeAllRanges();
+						selection.addRange(range);
+
+						// Focus the element
+						element.focus();
+
+						return true;
+					}
+
+					return false;
+				} catch (error) {
+					console.error("Error setting cursor position:", error);
+					return false;
+				}
+			}
+
 			function generateExpressionInput(parentElement, labelText) {
 				const label = document.createElement("label");
 				label.className = "expression-input-label";
 				label.textContent = labelText;
 
-				const container = document.createElement("div");
-				container.className = "expression-input-container";
+				const input = document.createElement("div");
+				input.contentEditable = "plaintext-only";
+				input.spellcheck = false;
+				input.ariaMultiline = "true";
+				input.translate = "no";
+				input.writingSuggestions = "false";
+				input.autocapitalize = "none";
+				input.autocorrect = "off";
+				input.role = "textbox";
+				input.className = "expression-input hljs language-js";
 
-				const input = document.createElement("input");
-				input.type = "text";
-				input.className = "expression-input hljs";
-
-				const pre = document.createElement("pre");
-				pre.className = "expression-input-highlight";
-
-				const code = document.createElement("code");
-				code.className = "language-js expression-input-highlight-inner";
-
-				pre.appendChild(code);
-				container.appendChild(input);
-				container.appendChild(pre);
-				label.appendChild(container);
-
+				label.appendChild(input);
 				parentElement.appendChild(label);
 			}
+			function generateExpressionDisplay(parentElement, expression) {
+				const display = document.createElement("div");
+				display.className = "expression-display hljs language-js";
+				display.textContent = expression;
+				hljs.highlightElement(display);
+				parentElement.replaceChildren(display);
+			}
+			const inputsContainer = document.getElementById("inputs-container");
 			const expressionContainer = document.getElementById(
 				"expression-container",
 			);
-			for (let i = 0; i < 10; i++) {
-				generateExpressionInput(expressionContainer, `Expression ${i + 1}`);
+			const puzzle = puzzles[0];
+			inputsContainer.innerHTML = "";
+			for (let i = 0; i < puzzle.inputs.length; i++) {
+				generateExpressionInput(inputsContainer, puzzle.inputs[i]);
+			}
+			const submitButton = document.createElement("button");
+			submitButton.textContent = "submit";
+			submitButton.addEventListener("click", () => {
+				const expressionInputs =
+					document.getElementsByClassName("expression-input");
+				const inputs = Array.from(expressionInputs).map(
+					(expressionInput) => expressionInput.innerText,
+				);
+				const isValid = inputs.every(isValidJS);
+				if (!isValid) return;
+				console.log(inputs);
+				const inputsEvaled = Object.fromEntries(
+					puzzle.inputs.map((inputName, index) => [
+						inputName,
+						eval(inputs[index]),
+					]),
+				);
+				const result = evalWithBindings(puzzle.expression, inputsEvaled);
+				if (!!result) {
+					generateExpressionDisplay(expressionContainer, "you did it!");
+				} else {
+					generateExpressionDisplay(expressionContainer, "try again!");
+					window.setTimeout(() => {
+						generateExpressionDisplay(expressionContainer, puzzle.expression);
+					}, 1000);
+				}
+			});
+			inputsContainer.appendChild(submitButton);
+			generateExpressionDisplay(expressionContainer, puzzle.expression);
+
+			function sanitizeExpressionText(text) {
+				return text.replaceAll(/\n/g, "");
 			}
 
 			const expressionInputs =
 				document.getElementsByClassName("expression-input");
 			function updateHighlight(event) {
 				const expressionInput = event.target;
-				const expression = expressionInput.value;
-				console.log(expressionInput.parentElement);
-				const inputHighlight =
-					expressionInput.parentElement.getElementsByClassName(
-						"expression-input-highlight-inner",
-					)[0];
-				inputHighlight.innerHTML = expression;
-				inputHighlight.removeAttribute("data-highlighted");
+				const containsNewline = expressionInput.innerText.includes("\n");
+				const expression = sanitizeExpressionText(expressionInput.innerText);
+				const selOffsets = getSelectionCharacterOffsetWithin(expressionInput);
+				expressionInput.innerText = expression;
+				expressionInput.removeAttribute("data-highlighted");
 				if (isValidJS(expression)) {
-					inputHighlight.removeAttribute("data-invalid-js");
 					expressionInput.removeAttribute("data-invalid-js");
-					hljs.highlightElement(inputHighlight);
+					hljs.highlightElement(expressionInput);
 				} else {
-					inputHighlight.setAttribute("data-invalid-js", "true");
 					expressionInput.setAttribute("data-invalid-js", "true");
 				}
+				setCursorPosition(
+					expressionInput,
+					containsNewline ? selOffsets.start - 1 : selOffsets.start,
+				);
 			}
 			Array.prototype.forEach.call(expressionInputs, (expressionInput) => {
 				expressionInput.addEventListener("input", updateHighlight);
+				expressionInput.addEventListener("keydown", (event) => {
+					if (event.key === "Enter") {
+						submitButton.click();
+					}
+				});
 				updateHighlight({ target: expressionInput });
 			});
 		</script>
